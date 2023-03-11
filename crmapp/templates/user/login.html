@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container text-center">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning" role="alert">
+        {% for message in messages %}
+        {{ message }}<br>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="row justify-content-center w-100 m-auto" data-bs-theme="dark">
+
+        <div class="col">
+
+            <main class="form-signin w-100 m-auto">
+                <form action="{{ url_for('user.process_login') }}" method="post">
+                    {{ form.hidden_tag() }}
+
+                    <h1 class="h3 mb-3 fw-normal">{{title}}</h1>
+
+                    <div class="form-floating">
+                        {{ form.username() }}
+                        <label for="floatingInput">Имя пользователя</label>
+                    </div>
+                    <div class="form-floating">
+                        {{ form.password() }}
+                        <label for="floatingPassword">Password</label>
+                    </div>
+
+                    <div>
+                        {{ form.remember_me() }}
+                        {{ form.remember_me.label() }}
+
+                    </div>
+                    <div class="button" data-bs-theme="dark">
+                    {{ form.submit(class_="btn btn-dark btn-lg btn-block") }}
+                    </div>
+                    <p class="mt-5 mb-3 text-muted">&copy; CRM-HookahBars 2023</p>
+                </form>
+            </main>
+        </div>
+    </div>
+</div>
+{% endblock %}
