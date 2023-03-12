@@ -5,38 +5,42 @@
 <div class="container text-center">
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <div class="alert alert-warning" role="alert">
-                {% for message in messages %}
-                    {{ message }}<br>
-                {% endfor %}
+            {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
             </div>
+            {% endfor %}
         {% endif %}
     {% endwith %}
 
-    <div class="row justify-content-center w-100 m-auto">
+    <div class="row justify-content-center w-100 m-auto" >
 
         <div class="col">
 
             <main class="form-signin w-100 m-auto">
-                <form action="{{ url_for('user.process_login') }}" method="post">
+                <form action="{{ url_for('user.process_reg') }}" method="post">
                     {{ form.hidden_tag() }}
 
                     <h1 class="h3 mb-3 fw-normal">{{title}}</h1>
 
                     <div class="form-floating">
-                        {{ form.login_username() }}
+                        {{ form.username() }}
                         <label for="floatingInput">Имя пользователя</label>
                     </div>
+                     <div class="form-floating">
+                        {{ form.email() }}
+                        <label for="floatingInput">Email</label>
+                    </div>
                     <div class="form-floating">
-                        {{ form.login_password() }}
+                        {{ form.password() }}
+                        <label for="floatingPassword">Password</label>
+                    </div>
+                    <div class="form-floating">
+                        {{ form.password2() }}
                         <label for="floatingPassword">Password</label>
                     </div>
 
-                    <div>
-                        {{ form.remember_me() }}
-                        {{ form.remember_me.label() }}
 
-                    </div>
                     <div class="button" data-bs-theme="dark">
                     {{ form.submit(class_="btn btn-dark btn-lg btn-block") }}
                     </div>

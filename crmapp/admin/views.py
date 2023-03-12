@@ -9,4 +9,4 @@ blueprint = Blueprint('admin', __name__, url_prefix='/admin')
 @admin_required
 def admin_index():
     title = "Панель администратора"
-    return render_template('/templates/admin/index.html', title=title)
+    return render_template('/admin/index.html', title=title)
