@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from crmapp.user.forms import LoginForm
+from flask_migrate import Migrate
 from crmapp.db import db
 from crmapp.user.models import User
 from crmapp.user.views import blueprint as user_blueprint
@@ -12,6 +13,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
     db.init_app(app)
+    migrate = Migrate(app, db)
 
     with app.app_context():
         db.create_all()
