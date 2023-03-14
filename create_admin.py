@@ -1,9 +1,9 @@
 from getpass import getpass
 import sys
 
-from webapp import create_app
-from webapp.db import db
-from webapp.user.models import User
+from crmapp import create_app
+from crmapp.db import db
+from crmapp.user.models import User
 
 app = create_app()
 

@@ -1,15 +1,23 @@
 import os
-basedir = os.path.abspath(os.path.dirname(__file__))
+
 from datetime import timedelta
+from dotenv import load_dotenv
 
+dotenv_path = os.path.join(os.path.dirname(__file__), '..\.', '.env')
+
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Устанавливает время хранения файлов cookie в браузере
 REMEMBER_COOKIE_DURATION = timedelta(days=5)
-SQLALCHEMY_DATABASE_URI = \
-    'sqlite:///' + os.path.join(basedir, '..\.', 'crmapp.db')
 
+# Устанавливает директорию для хранения файла БД (SQLite3)
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, '..\.', 'crmapp.db')
 
-WEATHER_API_KEY = '4b12746ddce34c1ca25153404232402'
-WEATHER_DEFAULT_CITY = 'Moscow'
+# Секретный ключ для хеширования пароля
+SECRET_KEY = os.environ['SECRET_KEY']
 
-SECRET_KEY = "dsnckejwhuohvn12jj34r9u3638$@&falm9*#q2j"
-
+# Это отключит функционал отправки сигнала приложению при изменениях в БД
 SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -1,30 +1,30 @@
+import os.path
+
 from flask import Flask
 from flask_login import LoginManager
-from crmapp.user.forms import LoginForm
 from flask_migrate import Migrate
+
 from crmapp.db import db
+from crmapp.user.forms import LoginForm
 from crmapp.user.models import User
-from crmapp.user.views import blueprint as user_blueprint
-from crmapp.admin.views import blueprint as admin_blueprint
-from crmapp.tables.views import blueprint as tables_blueprint
+from crmapp.blueprints import init_blueprints
 
 
-def create_app():
+def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
     db.init_app(app)
     migrate = Migrate(app, db)
 
-    with app.app_context():
-        db.create_all()
+    if os.path.isfile('crmapp.db'):
+        with app.app_context():
+            db.create_all()
 
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'user.login'
 
-    app.register_blueprint(user_blueprint)
-    app.register_blueprint(admin_blueprint)
-    app.register_blueprint(tables_blueprint)
+    init_blueprints(app)
 
     @login_manager.user_loader
     def load_user(user_id):
