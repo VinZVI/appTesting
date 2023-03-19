@@ -74,9 +74,9 @@ class RegistrationForm(FlaskForm):
     def validate_username(self, username: StringField) -> Exception:
         users_count = User.query.filter_by(username=username.data).count()
         if users_count > 0:
-            raise ValidationError('Пользователь с таким именем уже зарегистрирован')
+            raise ValidationError('Введены не корректные данные "Имя пользователя"')
 
     def validate_email(self, email: StringField) -> Exception:
         users_count = User.query.filter_by(email=email.data).count()
         if users_count > 0:
-            raise ValidationError('Пользователь с такой электронной почтой уже зарегистрирован')
+            raise ValidationError('Введены не корректные данные "Email"')

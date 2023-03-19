@@ -61,9 +61,12 @@ def process_reg():
         flash('Вы успешно зарегистрировались!')
         return redirect(url_for('user.login'))
     else:
-        field_errors = form.errors.keys()
-        if 'username' in field_errors or 'email' in field_errors:
-            flash('Введены не корректные данные')
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash('Ошибка в поле "{}": - {}'.format(
+                    getattr(form, field).label.text,
+                    error
+                ), 'error')
         return redirect(url_for('user.register'))
     flash('Пожалуйста, исправьте ошибки в форме')
     return redirect(url_for('user.register'))
@@ -73,4 +76,4 @@ def process_reg():
 def logout():
     logout_user()
     flash('Вы вышли из системы')
-    return redirect(url_for('tables.index'))
+    return redirect(url_for('main.home'))
