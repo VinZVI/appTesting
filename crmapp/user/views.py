@@ -1,10 +1,11 @@
+from flask import Blueprint
 from flask import render_template, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user
+
 from crmapp.db import db
 from crmapp.user.forms import LoginForm, RegistrationForm
 from crmapp.user.models import User
-
-from flask import Blueprint
+from crmapp.exceptions import DBSaveException, DataBaseSaveError
 
 blueprint = Blueprint('user', __name__, url_prefix='/users')
 
@@ -51,7 +52,12 @@ def process_reg():
         )
         new_user.set_password(form.password.data)
         db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except DBSaveException as e:
+            print(e)
+            db.session.rollback()
+            raise DataBaseSaveError(e)
         flash('Вы успешно зарегистрировались!')
         return redirect(url_for('user.login'))
     else:
