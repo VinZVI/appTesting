@@ -1,10 +1,11 @@
+from flask import Blueprint
 from flask import render_template, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user
+
 from crmapp.db import db
 from crmapp.user.forms import LoginForm, RegistrationForm
 from crmapp.user.models import User
-
-from flask import Blueprint
+from crmapp.exceptions import DBSaveException, DataBaseSaveError
 
 blueprint = Blueprint('user', __name__, url_prefix='/users')
 
@@ -51,13 +52,21 @@ def process_reg():
         )
         new_user.set_password(form.password.data)
         db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except DBSaveException as e:
+            print(e)
+            db.session.rollback()
+            raise DataBaseSaveError(e)
         flash('Вы успешно зарегистрировались!')
         return redirect(url_for('user.login'))
     else:
-        field_errors = form.errors.keys()
-        if 'username' in field_errors or 'email' in field_errors:
-            flash('Введены не корректные данные')
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash('Ошибка в поле "{}": - {}'.format(
+                    getattr(form, field).label.text,
+                    error
+                ), 'error')
         return redirect(url_for('user.register'))
     flash('Пожалуйста, исправьте ошибки в форме')
     return redirect(url_for('user.register'))
@@ -67,4 +76,4 @@ def process_reg():
 def logout():
     logout_user()
     flash('Вы вышли из системы')
-    return redirect(url_for('tables.index'))
+    return redirect(url_for('main.home'))

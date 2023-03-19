@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    <section id="section-jumbotron" class="jumbotron jumbotron-fluid d-flex justify-content-center align-items-center">
+        <div class="container text-center">
+            <h1>{{ title }}</h1>
+            <p class="lead d-none d-sm-block">CRM system for hookah bars</p>
+            <p class="lead">Organize the work of your hookah bars</p>
+
+            {% if not current_user.is_authenticated %}
+
+                <p class="lead">Sign up and get started</p>
+
+                <a href="{{ url_for('user.register') }}" class="btn btn-lg btn-warning">Sign Up</a>
+
+            {% else %}
+                <a href="{{ url_for('main.home') }}" class="btn btn-lg btn-secondary">Back to Dashboard</a>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

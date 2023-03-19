@@ -1,6 +1,6 @@
 import os.path
 
-from flask import Flask
+from flask import Flask, render_template, current_app
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
@@ -16,7 +16,7 @@ def create_app() -> Flask:
     db.init_app(app)
     migrate = Migrate(app, db)
 
-    if os.path.isfile('crmapp.db'):
+    if not os.path.isfile('crmapp.db'):
         with app.app_context():
             db.create_all()
 
@@ -29,5 +29,9 @@ def create_app() -> Flask:
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(user_id)
+
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template('404.html', title="Oops! Page Not Found", error=error), 404
 
     return app

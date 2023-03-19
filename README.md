@@ -9,7 +9,7 @@ Install the requirements:
 ```bash
 pip install -r requirements.txt
 ```
-add to `config.py`
+add to `.env` 'SECRET_KEY' and add path to `config.py`
 ```python
 import os
 
