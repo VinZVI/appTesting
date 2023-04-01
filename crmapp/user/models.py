@@ -8,15 +8,36 @@ from enum import Enum
 class RolesEnum(Enum):
     admin = "admin"
     manager = "manager"
-    user = "user"
+    personal = "personal"
 
 
 class User(db.Model, UserMixin):
+    __tablename__: str = "users"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(), index=True, unique=True)
-    password = db.Column(db.String())
-    email = db.Column(db.String(), unique=True)
-    role = db.Column(db.String(), index=True)
+    username = db.Column(
+        db.String(),
+        index=True,
+        nullable=False,
+        unique=True
+    )
+    password = db.Column(db.String(), nullable=False)
+    email = db.Column(
+        db.String(),
+        unique=True,
+        nullable=False
+    )
+    role = db.Column(
+        db.Enum(RolesEnum),
+        nullable=False,
+        index=True,
+        default=RolesEnum.manager
+    )
+
+    hookahs = db.relationship(
+        'Hookah',
+        backref='user',
+        lazy='dynamic'
+    )
 
     def set_password(self, password: str) -> None:
         self.password = generate_password_hash(password)
@@ -27,6 +48,10 @@ class User(db.Model, UserMixin):
     @property
     def is_admin(self) -> bool:
         return self.role == RolesEnum.admin
+
+    @property
+    def is_manager(self) -> bool:
+        return self.role == RolesEnum.manager
 
     def __repr__(self) -> str:
         return '<User {}>'.format(self.username)
