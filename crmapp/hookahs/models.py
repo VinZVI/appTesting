@@ -33,6 +33,7 @@ class Hookah(db.Model):
         return '<Hookah {}: user {}>'.format(self.name_hookah, self.user_id)
 
 
+
 class TableStateEnum(Enum):
     open_order = "open_order"
     free = "free"
@@ -44,7 +45,7 @@ class Table(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # первичный ключ
     table_number = db.Column(db.String, nullable=False)  # nullable=False - не может быть пустым
     description = db.Column(db.Text)
-    total_of_persons = db.Column(db.String, nullable=False)
+    total_of_persons = db.Column(db.Integer, nullable=False, default=4)
     table_state = db.Column(db.String)
     booked = db.relationship(
         'DateTimeBooked',

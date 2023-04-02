@@ -4,8 +4,8 @@ from flask_login import current_user
 
 from crmapp.db import db
 from crmapp.exceptions import DBSaveException, DataBaseSaveError
-from crmapp.hookahs.forms import HookahForm
-from crmapp.hookahs.models import Hookah
+from crmapp.hookahs.forms import HookahForm,HookahDeleteForm
+from crmapp.hookahs.models import Hookah, Table
 from crmapp.user.decorators import manager_required
 
 blueprint = Blueprint('hookahs', __name__, '/hookahs')
@@ -43,9 +43,23 @@ def add_bar():
             print(e)
             db.session.rollback()
             raise DataBaseSaveError(e)
-        flash(f'Вы успешно добавили кальянную {form.name_hookah.data}')
+        new_bar = Hookah.query.filter_by(name_hookah=form.name_hookah.data).first()
+        for table_number in range(1, form.count_tables.data+1):
+            new_table = Table(
+                table_number=table_number,
+                hookah_id=new_bar.id
+            )
+            db.session.add(new_table)
+        try:
+            db.session.commit()
+        except DBSaveException as e:
+            print(e)
+            db.session.rollback()
+            raise DataBaseSaveError(e)
+        flash(f'Вы успешно добавили кальянную {form.name_hookah.data} \
+с {form.count_tables.data} столами')
         return redirect(url_for('hookahs.bars'))
-    flash(f'Название {form.name_hookah.data}\
+    flash(f'Название {form.name_hookah.data} \
 кальянной уже существует, введите другое название')
     return redirect(url_for('hookahs.bars'))
 
@@ -54,12 +68,40 @@ def add_bar():
 @manager_required
 def bar_edit(name_hookah):
     title = name_hookah
-    bar = Hookah.query.filter_by(name_hookah='Hookah1').first()
+    bar = Hookah.query.filter_by(name_hookah=name_hookah).first()
     tables_list = bar.tables.all()
     worker_days = bar.worker_days.all()
     return render_template(
-        "hookahs/bars.html",
+        "hookahs/bar_edit.html",
         title=title,
-        hookahs_list=tables_list,
+        tables_list=tables_list,
         worker_days=worker_days
     )
+
+
+@blueprint.route('/bar_delete/<name_hookah>', methods=['GET', 'POST'])
+@manager_required
+def bar_delete(name_hookah):
+    title = 'Delete hookah'
+    form = HookahDeleteForm(request.form)
+    if request.method == 'POST' and form.validate_on_submit():
+        user = current_user._get_current_object()
+        bar = Hookah.query.filter_by(name_hookah=form.name_hookah.data).first()
+        if user.check_password(form.login_password.data):
+            db.session.delete(bar)
+            try:
+                db.session.commit()
+            except DBSaveException as e:
+                print(e)
+                db.session.rollback()
+                raise DataBaseSaveError(e)
+            flash(f'Вы удалили кальянную {name_hookah}')
+            return redirect(url_for('hookahs.bars'))
+    return render_template(
+        "hookahs/bar_delete.html",
+        title=title,
+        name_hookah=name_hookah,
+        form=form
+    )
+
+
