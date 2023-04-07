@@ -16,6 +16,9 @@ def create_app() -> Flask:
     db.init_app(app)
     migrate = Migrate(app, db)
 
+    from .user import models
+    from .hookahs import models
+
     if not os.path.isfile('crmapp.db'):
         with app.app_context():
             db.create_all()

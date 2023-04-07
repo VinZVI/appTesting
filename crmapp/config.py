@@ -21,3 +21,6 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # Это отключит функционал отправки сигнала приложению при изменениях в БД
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# Устанавливает период времени бронирования столов
+DELTA_TIME_ROUND = timedelta(minutes=30)
