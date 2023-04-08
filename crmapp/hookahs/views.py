@@ -4,8 +4,10 @@ from flask_login import current_user
 
 from crmapp.db import db
 from crmapp.exceptions import DBSaveException, DataBaseSaveError
-from crmapp.hookahs.forms import HookahForm,HookahDeleteForm
-from crmapp.hookahs.models import Hookah, Table
+from crmapp.hookahs.forms import HookahForm, HookahDeleteForm
+from crmapp.tables.forms import TableForm
+from crmapp.hookahs.models import Hookah
+from crmapp.tables.models import Table
 from crmapp.user.decorators import manager_required
 
 blueprint = Blueprint('hookahs', __name__, '/hookahs')
@@ -67,15 +69,18 @@ def add_bar():
 @blueprint.route('/<name_hookah>')
 @manager_required
 def bar_edit(name_hookah):
-    title = name_hookah
     bar = Hookah.query.filter_by(name_hookah=name_hookah).first()
+    form = TableForm(hookah_id=bar.id)
+    title = name_hookah
     tables_list = bar.tables.all()
     worker_days = bar.worker_days.all()
     return render_template(
         "hookahs/bar_edit.html",
         title=title,
         tables_list=tables_list,
-        worker_days=worker_days
+        worker_days=worker_days,
+        bar=bar,
+        form=form
     )
 
 

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import IntegerField, StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Email, NumberRange, ValidationError, Length
+from wtforms.validators import DataRequired, NumberRange, ValidationError, Length
 from crmapp.hookahs.models import Hookah
 
 
@@ -26,7 +26,7 @@ class HookahForm(FlaskForm):
     def validate_hookahname(self, name_hookah: StringField) -> Exception:
         users_count = Hookah.query.filter_by(name_hookah=name_hookah.data).count()
         if users_count > 0:
-            raise ValidationError('Введены не корректные данные "Имя пользователя"')
+            raise ValidationError('Введены не корректные данные "Название кальянной"')
 
 
 class HookahDeleteForm(FlaskForm):
