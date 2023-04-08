@@ -91,8 +91,8 @@ def bar_delete(name_hookah):
     form = HookahDeleteForm(request.form)
     if request.method == 'POST' and form.validate_on_submit():
         user = current_user._get_current_object()
-        bar = Hookah.query.filter_by(name_hookah=form.name_hookah.data).first()
-        if user.check_password(form.login_password.data):
+        if form.name_hookah.data == name_hookah and user.check_password(form.login_password.data):
+            bar = Hookah.query.filter_by(name_hookah=form.name_hookah.data).first()
             db.session.delete(bar)
             try:
                 db.session.commit()
@@ -102,6 +102,7 @@ def bar_delete(name_hookah):
                 raise DataBaseSaveError(e)
             flash(f'Вы удалили кальянную {name_hookah}')
             return redirect(url_for('hookahs.bars'))
+        flash(f'Не верно введены данные "Название кальянной" или "Password"')
     return render_template(
         "hookahs/bar_delete.html",
         title=title,
