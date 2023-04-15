@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+    <section id="section-jumbotron" class="jumbotron jumbotron-fluid d-flex justify-content-center align-items-center">
+        <div class="container text-center">
+            <h3>Вы уверены, что хотите удалить стол: </h3>
+            <h2 class="text-danger">{{ table.table_number }}</h2>
+            <form action="{{
+                url_for(
+                    'tables.table_delete',
+                    name_hookah=name_hookah,
+                    table_id=table.id
+                )
+            }}" method="post">
+                    {{ form.hidden_tag() }}
+                <div class="form-signin w-100 m-auto">
+                <div class="form-floating">
+                    {{ form.table_number() }}
+                    <label for="floatingInput">Название стола</label>
+                </div>
+                <div class="form-floating ">
+                    {{ form.login_password() }}
+                    <label for="floatingPassword">Password</label>
+                </div>
+                </div>
+                <div class="button" data-bs-theme="dark">
+                    {{ form.submit(class_="btn btn-lg btn-warning") }}
+                    <a href="{{ url_for('hookahs.bar_edit', name_hookah=name_hookah) }}" class="btn btn-lg btn-secondary">Back to Hookah list</a>
+                </div>
+            </form>
+
+        </div>
+    </section>
+{% endblock %}
