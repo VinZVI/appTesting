@@ -50,3 +50,23 @@ body {
 .form-signin .button {
   margin-top: 10px;
 }
+
+input[name="startWD_time"] {
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+input[name="finishWD_time"] {
+  padding-bottom: 2px;
+  padding-top: 2px
+}
+
+input[name="period_time_panel"] {
+  padding-bottom: 2px;
+  padding-top: 2px
+}
+
+.text-center.wd-form {
+  padding-top: 5px;
+  padding-bottom: 5px
+}

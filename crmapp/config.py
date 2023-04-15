@@ -1,6 +1,6 @@
 import os
 
-from datetime import timedelta
+from datetime import time, timedelta
 from dotenv import load_dotenv
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '..\.', '.env')
@@ -23,4 +23,4 @@ SECRET_KEY = os.environ['SECRET_KEY']
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Устанавливает период времени бронирования столов
-DELTA_TIME_ROUND = timedelta(minutes=30)
+DELTA_TIME_ROUND = time(0, 30)

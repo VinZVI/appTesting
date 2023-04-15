@@ -12,7 +12,7 @@ from crmapp.user.decorators import manager_required
 blueprint = Blueprint('tables', __name__, '/tables')
 
 
-@blueprint.route("/add_table", methods=['POST'])
+@blueprint.route('/add_table', methods=['POST'])
 @manager_required
 def add_table():
     form = TableForm(request.form)
@@ -38,33 +38,42 @@ def add_table():
     return redirect(url_for('hookahs.bar_edit', name_hookah=bar.name_hookah))
 
 
-@blueprint.route('/<table_number>')
+@blueprint.route('/edit/<table_id>', methods=['GET', 'POST'])
 @manager_required
-def table_edit(table_number):
-    pass
-    # form = TableForm()
-    # title = name_hookah
-    # bar = Hookah.query.filter_by(name_hookah=name_hookah).first()
-    # tables_list = bar.tables.all()
-    # worker_days = bar.worker_days.all()
-    # return render_template(
-    #     "hookahs/bar_edit.html",
-    #     title=title,
-    #     tables_list=tables_list,
-    #     worker_days=worker_days,
-    #     form=form
-    # )
+def table_edit(table_id):
+    table = Table.query.get_or_404(table_id)
+    title = table.table_number
+    form = TableForm(obj=table)
+    if request.method == 'POST' and form.validate_on_submit():
+        form.populate_obj(table)
+        db.session.add(table)
+        try:
+            db.session.commit()
+        except DBSaveException as e:
+            print(e)
+            db.session.rollback()
+            raise DataBaseSaveError(e)
+        flash(f'Вы изменили данные стола {form.table_number.data}')
+        return redirect((url_for('tables.table_edit', table_id=table.id)))
+    bar = Hookah.query.filter_by(id=table.hookah_id).first()
+    return render_template(
+        'tables/table_edit.html',
+        title=title,
+        table=table,
+        form=form,
+        bar=bar
+    )
 
 
-@blueprint.route('/table_delete/<name_hookah>/<table_number>', methods=['GET', 'POST'])
+@blueprint.route('/table_delete/<name_hookah>/<table_id>', methods=['GET', 'POST'])
 @manager_required
-def table_delete(table_number, name_hookah):
+def table_delete(table_id, name_hookah):
     title = 'Delete table'
-    form = TableDeleteForm(request.form)
+    table = Table.query.get_or_404(table_id)
+    form = TableDeleteForm()
     if request.method == 'POST' and form.validate_on_submit():
         user = current_user._get_current_object()
-        if form.table_number.data == table_number and user.check_password(form.login_password.data):
-            table = Table.query.filter_by(table_number=form.table_number.data).first()
+        if form.table_number.data == table.table_number and user.check_password(form.login_password.data):
             db.session.delete(table)
             try:
                 db.session.commit()
@@ -72,13 +81,13 @@ def table_delete(table_number, name_hookah):
                 print(e)
                 db.session.rollback()
                 raise DataBaseSaveError(e)
-            flash(f'Вы удалили стол {table_number}')
-            return redirect((url_for('hookahs.bar_edit', name_hookah=name_hookah)))
+            flash(f'Вы удалили стол {table.table_number}')
+            return redirect(url_for('hookahs.bar_edit', name_hookah=name_hookah))
         flash(f'Не верно введены данные "Название стола" или "Password"')
     return render_template(
-        "tables/table_delete.html",
+        'tables/table_delete.html',
         title=title,
-        table_number=table_number,
+        table=table,
         form=form,
         name_hookah=name_hookah
     )

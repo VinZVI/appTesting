@@ -3,7 +3,7 @@ from enum import Enum
 
 from flask import current_app
 from crmapp.db import db
-from crmapp.config import DELTA_TIME_ROUND
+
 
 
 class TableStateEnum(Enum):

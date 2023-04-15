@@ -3,12 +3,12 @@
     <section id="section-jumbotron" class="jumbotron jumbotron-fluid d-flex justify-content-center align-items-center">
         <div class="container text-center">
             <h3>Вы уверены, что хотите удалить стол: </h3>
-            <h2 class="text-danger">{{ table_number }}</h2>
+            <h2 class="text-danger">{{ table.table_number }}</h2>
             <form action="{{
                 url_for(
                     'tables.table_delete',
                     name_hookah=name_hookah,
-                    table_number=table_number
+                    table_id=table.id
                 )
             }}" method="post">
                     {{ form.hidden_tag() }}

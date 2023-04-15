@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, SubmitField, PasswordField
+from wtforms import IntegerField, StringField, SubmitField, PasswordField, HiddenField, TimeField, SelectField
 from wtforms.validators import DataRequired, NumberRange, ValidationError, Length
-from crmapp.hookahs.models import Hookah
+from crmapp.hookahs.models import Hookah, WeekDayEnum
 
 
 class HookahForm(FlaskForm):
@@ -57,4 +57,30 @@ class HookahDeleteForm(FlaskForm):
         if users_count is None:
             raise ValidationError('Кальянной с таким названием не существует.')
 
+
+class WorkingDayForm(FlaskForm):
+    week_day = HiddenField(
+        'День недели'
+    )
+
+    startWD_time = TimeField(
+        validators=[DataRequired()],
+        render_kw={
+            "class": "form-control"
+        }
+    )
+
+    finishWD_time = TimeField(
+        validators=[DataRequired()],
+        render_kw={
+            "class": "form-control"
+        }
+    )
+
+    period_time_panel = TimeField(
+        validators=[DataRequired()],
+        render_kw={
+            "class": "form-control"
+        }
+    )
 
