@@ -1,6 +1,6 @@
 import os.path
 
-from flask import Flask, render_template, current_app
+from flask import Flask, render_template
 from flask_login import LoginManager
 from flask_migrate import Migrate
 

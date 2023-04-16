@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Email, NumberRange, ValidationError, Length
-from crmapp.hookahs.models import Hookah
+from wtforms import IntegerField, StringField, SubmitField, PasswordField, HiddenField, TimeField, SelectField
+from wtforms.validators import DataRequired, NumberRange, ValidationError, Length
+from crmapp.hookahs.models import Hookah, WeekDayEnum
 
 
 class HookahForm(FlaskForm):
@@ -26,7 +26,7 @@ class HookahForm(FlaskForm):
     def validate_hookahname(self, name_hookah: StringField) -> Exception:
         users_count = Hookah.query.filter_by(name_hookah=name_hookah.data).count()
         if users_count > 0:
-            raise ValidationError('Введены не корректные данные "Имя пользователя"')
+            raise ValidationError('Введены не корректные данные "Название кальянной"')
 
 
 class HookahDeleteForm(FlaskForm):
@@ -57,4 +57,30 @@ class HookahDeleteForm(FlaskForm):
         if users_count is None:
             raise ValidationError('Кальянной с таким названием не существует.')
 
+
+class WorkingDayForm(FlaskForm):
+    week_day = HiddenField(
+        'День недели'
+    )
+
+    startWD_time = TimeField(
+        validators=[DataRequired()],
+        render_kw={
+            "class": "form-control"
+        }
+    )
+
+    finishWD_time = TimeField(
+        validators=[DataRequired()],
+        render_kw={
+            "class": "form-control"
+        }
+    )
+
+    period_time_panel = TimeField(
+        validators=[DataRequired()],
+        render_kw={
+            "class": "form-control"
+        }
+    )
 
