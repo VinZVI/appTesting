@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container" xmlns="http://www.w3.org/1999/html">
+        <div class="w-95 w-md-75 w-lg-60 w-xl-55 mx-auto mb-6 text-center">
+            <h2 class="text-center">
+                Hookah bar
+                <a href="{{ url_for('hookahs.bar_edit', name_hookah=name_hookah) }}" class="text-danger">
+                    {{ title }}
+                </a>
+            </h2>
+            <div class="subtitle alt-font">
+                <h2 class="text-center">
+                    Today
+                    <span class="text-primary">{{ today.day }}</span>
+
+                    <span class="title">{{ month }}</span>
+                </h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="schedule-table">
+                    <table class="table bg-white">
+
+                        {# Колонка расписания #}
+
+
+                            <tr>
+
+                                <th>Time panel</th>
+
+                                {% for table_booked in tables_booked_list %}
+                                {% set table = table_booked[0] %}
+                                    <td class="day">
+                                        {# Ссылка на все заказы стола в этот день #}
+                                        <a href="{{ url_for('tables.table_edit', table_id=table.id) }}">
+                                            Стол - {{ table.table_number }}
+                                        </a>
+                                    </td>
+                                {% endfor %}
+                            </tr>
+
+                            {% for time_for_dashboard in time_panel_list %}
+                            <tr>
+
+                                <th>{{ time_for_dashboard }}</th>
+
+                                {% for table_booked in tables_booked_list %}
+                                {% set table = table_booked[1] %}
+                                    {% if table_booked[1] %}
+                                        {% for booking_time in table_booked[1] %}
+                                            {% set start_booking_time =  booking_time.start_date_time_brooke.time().strftime("%H:%M") %}
+                                            {% set end_booking_time =  booking_time.finish_date_time_brooke.time().strftime("%H:%M") %}
+                                            {% if time_for_dashboard == start_booking_time %}
+
+                                                    <td class="active">
+                                                        <h4>Забронировано</h4>
+                                                        <p>{{ start_booking_time }} - {{ end_booking_time }}</p>
+                                                        <div class="hover">
+                                                            <h4>Заказ №...</h4>
+                                                            <p>Сумма: ...</p>
+                                                            <span>Не оплачено</span>
+                                                        </div>
+                                                    </td>
+
+                                            {% else %}
+
+                                                    <td><a href="#">
+                                                        Забронировать
+                                                    </a></td>
+
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+
+                                            <td><a href="#">
+                                                Забронировать
+                                            </a></td>
+
+                                    {% endif %}
+                                {% endfor %}
+
+                            </tr>
+                            {% endfor %}
+
+
+
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

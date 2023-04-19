@@ -65,13 +65,13 @@ def table_edit(table_id):
     )
 
 
-@blueprint.route('/table_delete/<name_hookah>/<table_id>', methods=['GET', 'POST'])
+@blueprint.route('/table_delete/<name_hookah>/<table_id>', methods=['GET', 'DELETE'])
 @manager_required
 def table_delete(table_id, name_hookah):
     title = 'Delete table'
     table = Table.query.get_or_404(table_id)
     form = TableDeleteForm()
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'DELETE' and form.validate_on_submit():
         user = current_user._get_current_object()
         if form.table_number.data == table.table_number and user.check_password(form.login_password.data):
             db.session.delete(table)

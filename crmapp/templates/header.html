@@ -3,16 +3,21 @@
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <img width="50" height="50" hspace="20" src="{{ url_for('static', filename='favicon.ico') }}">
             <a href="/home/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                CRM-HookahBars
-                <!--          <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>-->
+                <h3>CRM-HookahBars</h3>
             </a>
 
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
 
                 <li class="nav-item active">
-                    <a href="{{ url_for('hookahs.bars') }}" class="nav-link px-2 text-white">Dashboard</a>
+                    <a href="{{ url_for('hookahs.bars') }}" class="nav-link px-2 text-white">
+                        Dashboard
+                    </a>
                 </li>
-                <li class="nav-item active"><a href="#" class="nav-link px-2 text-white">Features</a></li>
+                <li class="nav-item active">
+                    <a href="{{ url_for('hookahs.bars') }}" class="nav-link px-2 text-white">
+                        Your hookah bars
+                    </a>
+                </li>
                 <li class="nav-item active"><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
                 <li class="nav-item active"><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
                 <li class="nav-item active"><a href="#" class="nav-link px-2 text-white">About</a></li>
