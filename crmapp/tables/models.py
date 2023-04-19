@@ -47,9 +47,9 @@ class Table(db.Model):
 class DateTimeBooked(db.Model):
     __tablename__: str = "dt_booked"
     id = db.Column(db.Integer, primary_key=True)
-
+    bookers_name = db.Column(db.String)
     start_date_time_brooke = db.Column(db.DateTime, nullable=False)
-    finish_date_time_brooke = db.Column(db.DateTime, nullable=False)
+    finish_date_time_brooke = db.Column(db.DateTime)
 
     table_id = db.Column(
         db.Integer,
@@ -57,13 +57,13 @@ class DateTimeBooked(db.Model):
         index=True
     )
 
-    def __init__(self, **kwargs):
-        super(DateTimeBooked, self).__init__(**kwargs)
-        if self.start_date_time_brooke is None:
-            self.start_date_time_brooke = round_dt_to_delta(
-                                                            datetime.utcnow,
-                                                            current_app.config['DELTA_TIME_ROUND']
-                                                            )
+    # def __init__(self, **kwargs):
+    #     super(DateTimeBooked, self).__init__(**kwargs)
+    #     if self.start_date_time_brooke is None:
+    #         self.start_date_time_brooke = round_dt_to_delta(
+    #                                                         datetime.utcnow,
+    #                                                         current_app.config['DELTA_TIME_ROUND']
+    #                                                         )
 
     def __repr__(self):
         return f'<Table {self.table_number_id}: start_dt_brooke {self.start_date_time_brooke}>'
