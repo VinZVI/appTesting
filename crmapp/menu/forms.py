@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 
 from crmapp.menu.models import Category, Item
 
-from wtforms import IntegerField, StringField, PasswordField, SubmitField
+from wtforms import HiddenField, IntegerField, StringField, SubmitField
 from wtforms.validators import DataRequired, Length, NumberRange, ValidationError
 
 class CategoryForm(FlaskForm):
@@ -24,8 +24,18 @@ class CategoryForm(FlaskForm):
         }    
     )
 
+    hookah_id = HiddenField(
+        'ID кальянной',
+        validators=[DataRequired()]
+    )
+
+    user_id = HiddenField(
+        'ID пользователя',
+        validators=[DataRequired()]
+    )
+
     submit = SubmitField(
-        'ADD',
+        'POST',
         render_kw={"class": "btn btn-primary"}
     )
 
@@ -42,6 +52,11 @@ class CategoryDeleteForm(FlaskForm):
             "class": "form-control",
             "placeholder": "Название Категории"
         }
+    )
+
+    hookah_id = HiddenField(
+        'ID кальянной',
+        validators=[DataRequired()]
     )
 
     submit = SubmitField(
@@ -91,8 +106,23 @@ class ItemForm(FlaskForm):
         }
     )
 
+    category_id = HiddenField(
+        'ID категории',
+        validators=[DataRequired()]
+    )
+
+    hookah_id = HiddenField(
+        'ID кальянной',
+        validators=[DataRequired()]
+    )
+
+    user_id = HiddenField(
+        'ID пользователя',
+        validators=[DataRequired()]
+    )
+
     submit = SubmitField(
-        'ADD',
+        'POST',
         render_kw={"class": "btn btn-primary"}
     )
 
@@ -109,6 +139,11 @@ class ItemDeleteForm(FlaskForm):
             "class": "form-control",
             "placeholder": "Название позиции"
         }
+    )
+
+    category_id = HiddenField(
+        'ID категории',
+        validators=[DataRequired()]
     )
 
     submit = SubmitField(
