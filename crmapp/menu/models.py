@@ -23,9 +23,9 @@ class Category(db.Model):
         index=True
     )
 
-    hookah = relationship('Hookah', backref='categories')
-    user = relationship('User', backref='categories')
-    items = relationship('Item', backref='category', uselist=False)
+    hookah = db.relationship('Hookah', backref='categories')
+    user = db.relationship('User', backref='categories')
+    items = db.relationship('Item', backref='category', uselist=False)
 
     def items_count(self):
         return Item.query.filter(Item.category_id == self.id).count()
@@ -63,8 +63,8 @@ class Item(db.Model):
         index=True
     )
 
-    hookah = relationship('Hookah', backref='items')
-    user = relationship('User', backref='items')
+    hookah = db.relationship('Hookah', backref='items')
+    user = db.relationship('User', backref='items')
 
     def __repr__(self):  # метод для отображения объекта
         return '<Item {} {}>'.format(self.id, self.item_name)    
