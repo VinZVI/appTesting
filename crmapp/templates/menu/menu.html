@@ -18,44 +18,47 @@
         </div>
     </section>
         {% if hookah.categories %}
-        {% for category in categories_list %}
-        <div class="col-md-12">
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingOne">
-                        <h4 class="panel-title">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        {{  category.category_name }}
-                        </a>
-                        </h4>
-                    </div>
-                    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                        <div class="panel-body">
-                            <p>{{ category.category_description }}</p>
-                            <table class="table table-striped"> 
-                                <thead> 
-                                    <tr> 
-                                        <th>#</th> 
-                                        <th>Item Name</th> 
-                                        <th>Item Description</th> 
-                                        <th>Price</th> 
-                                        <th>Availability</th> 
-                                        <th>Creation Date</th>
-                                    </tr> 
-                                </thead> 
-                                {% for item in items_list %}
-                                <tbody> 
-                                    <tr> 
-                                        <th scope="row">{{ loop.index }}</th> 
-                                        <td>{{ item.item_name }}</td> 
-                                        <td>{{ item.item_description }}</td> 
-                                        <td>{{ item.price }}</td> 
-                                        <td>{{ item.availability }}</td>
-                                        <td>{{ item.creation_date }}</td>
-                                    </tr> 
-                                </tbody> 
-                            </table>
+            {% for category in categories_list %}
+            <div class="col-md-12">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            {{  category.category_name }}
+                            </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <p>{{ category.category_description }}</p>
+                                <table class="table table-striped"> 
+                                    <thead> 
+                                        <tr> 
+                                            <th>#</th> 
+                                            <th>Item Name</th> 
+                                            <th>Item Description</th> 
+                                            <th>Price</th> 
+                                            <th>Availability</th> 
+                                            <th>Creation Date</th>
+                                        </tr> 
+                                    </thead> 
+                                    {% for item in items_list %}
+                                    <tbody> 
+                                        <tr> 
+                                            <th scope="row">{{ loop.index }}</th> 
+                                            <td>{{ item.item_name }}</td> 
+                                            <td>{{ item.item_description }}</td> 
+                                            <td>{{ item.price }}</td> 
+                                            <td>{{ item.availability }}</td>
+                                            <td>{{ item.creation_date }}</td>
+                                        </tr> 
+                                    </tbody> 
+                                    {% endfor %}
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
+            {% endfor %}        
+        {% endif %} 
 {% endblock %}

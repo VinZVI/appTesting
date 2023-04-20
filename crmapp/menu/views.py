@@ -33,29 +33,29 @@ def menu_edit(name_hookah):
     title = name_hookah
     hookah = Hookah.query.filter_by(name_hookah=name_hookah).first()
     categories_list = hookah.categories.all()
-    items_list = Item.query.filter(Item.hookah_id == hookah.id, Item.category_id, Item.user_id).all()
-    form1 = CategoryForm()
-    form2 = ItemForm()
+    items_list = Item.query.filter(Item.hookah_id == hookah.id, Item.category_id).all()
+    category_form = CategoryForm()
+    item_form = ItemForm()
     return render_template(
         "menu/menu-edit.html",
-        page_title=title,
+        title=title,
         categories_list=categories_list,
-        items_list=items_list
-        form1=form1
-        form2=form2
+        items_list=items_list,
+        category_form=category_form,
+        item_form=item_form
     )
 
 @blueprint.route("/menu-edit/<name_hookah>/add-category", methods=['POST'])
 @manager_required
 def add_category(name_hookah):
-    form = CategoryForm(request.form)
-    if form.validate_on_submit:
+    category_form = CategoryForm(request.form)
+    if category_form.validate_on_submit:
         user = current_user._get_current_object()
         current_hookah = Hookah.query.filter_by(name_hookah=name_hookah).first()
         new_category = Category(
-            category_name = form.category_name.data,
-            category_description = form.category_description.data
-            hookah_id = current_hookah.id
+            category_name = category_form.category_name.data,
+            category_description = category_form.category_description.data,
+            hookah_id = current_hookah.id,
             user_id = user.id
         )
         db.session.add(new_category)
@@ -65,17 +65,17 @@ def add_category(name_hookah):
             print(e)
             db.session.rollback()
             raise DataBaseSaveError(e)
-        flash(f'Вы успешно добавили категорию {form.category_name.data}')
+        flash(f'Вы успешно добавили категорию {category_form.category_name.data}')
         return redirect(url_for('menu.menu-edit'))
-    flash(f'Вы попытались создать категорию {form.category_name.data}, \
+    flash(f'Вы попытались создать категорию {category_form.category_name.data}, \
     которая уже существует, выберете другое название')
     return redirect(url_for('menu.menu-edit'))
 
-@blueprint.route("/menu-edit/<name_hookah>/delete-category", methods=['GET', 'DELETE'])
+@blueprint.route("/menu-edit/<name_hookah>/delete-category", methods=['GET', 'POST'])
 @manager_required
 def delete_category(name_hookah, category_name):
-    form = CategoryDeleteForm(request.form)
-    if request.method == 'DELETE' and form.validate_on_submit():
+    category_delete_form = CategoryDeleteForm(request.form)
+    if request.method == 'POST' and category_delete_form.validate_on_submit():
         hookah = Hookah.query.filter_by(name_hookah=name_hookah).first()
         category = Category.query.filter_by(Category.hookah_id == hookah.id, category_name=category_name).first()
         db.session.delete(category)
@@ -85,27 +85,32 @@ def delete_category(name_hookah, category_name):
             print(e)
             db.session.rollback()
             raise DataBaseSaveError(e)
-        flash(f'Вы удалили категорию {category_name}')
+        flash(f'Вы удалили категорию {category_delete_form.category_name.data}')
         return redirect(url_for('menu.menu-edit'))
-    flash(f'Такой категории {category_name} не существует')
-    return redirect('menu.menu-edit')
+    flash(f'Такой категории {category_delete_form.category_name.data} не существует')
+    return render_template(
+        'menu/delete-item.html',
+        category=category,
+        category_name=category_name,
+        name_hookah=name_hookah,
+    )
 
 
 @blueprint.route("/menu-edit/<name_hookah>/add-item", methods=['POST'])
 @manager_required
 def add_item(name_hookah, category_name):
-    form = ItemForm(request.form)
-    if form.validate_on_submit:
+    item_form = ItemForm(request.form)
+    if item_form.validate_on_submit:
         user = current_user._get_current_object()
         current_hookah = Hookah.query.filter_by(name_hookah=name_hookah).first()
         current_category = Category.query.filter_by(category_name=category_name).first()
         new_item = Item(
-            item_name = form.item_name.data
-            item_description = form.item_description.data
-            price = form.price.data
-            availability = form.availability.data
-            category_id = current_category.id
-            hookah_id = current_hookah.id
+            item_name = item_form.item_name.data,
+            item_description = item_form.item_description.data,
+            price = item_form.price.data,
+            availability = item_form.availability.data,
+            category_id = current_category.id,
+            hookah_id = current_hookah.id,
             user_id = user.id
         )
         db.session.add(new_item)
@@ -115,20 +120,20 @@ def add_item(name_hookah, category_name):
             print(e)
             db.session.rollback()
             raise DataBaseSaveError(e)
-        flash(f'Вы успешно добавили позицию {form.item_name.data}')
+        flash(f'Вы успешно добавили позицию {item_form.item_name.data}')
         return redirect(url_for('menu.menu-edit'))
-    flash(f'Вы попытались создать позицию {form.item_name.data}, \
+    flash(f'Вы попытались создать позицию {item_form.item_name.data}, \
     которая уже существует, выберете другое название')
     return redirect(url_for('menu.menu-edit'))
 
-@blueprint.route("/menu-edit/<name_hookah>", methods=['GET', 'DELETE'])
+@blueprint.route("/menu-edit/<name_hookah>", methods=['GET', 'POST'])
 @manager_required
 def delete_item(name_hookah, category_name, item_name):
-    form = ItemDeleteForm(request.form)
-    if request.method == 'DELETE' and form.validate_on_submit():
+    item_delete_form = ItemDeleteForm(request.form)
+    if request.method == 'POST' and item_delete_form.validate_on_submit():
         hookah = Hookah.query.filter_by(name_hookah=name_hookah).first()
         current_category = Category.query.filter_by(category_name=category_name).first()
-        item = Item.query.filter(Item.category_id == current_category.id, Item.hookah_id == hookah.id).first()
+        item = Item.query.filter(Item.category_id == current_category.id, Item.hookah_id == hookah.id, item_name=item_name).first()
         db.session.delete(item)
         try:
             db.session.commit()
@@ -136,7 +141,14 @@ def delete_item(name_hookah, category_name, item_name):
             print(e)
             db.session.rollback()
             raise DataBaseSaveError(e)
-        flash(f'Вы удалили позицию {item_name}')
+        flash(f'Вы удалили позицию {item_delete_form.item_name.data}')
         return redirect(url_for('menu.menu-edit'))
-    flash(f'Такой позиции {item_name} не существует')
-    return redirect('menu.menu-edit')
+    flash(f'Такой позиции {item_delete_form.item_name.data} не существует')
+    return render_template(
+        'menu/delete-item.html',
+        category_name=category_name,
+        item=item,
+        item_name=item_name,
+        item_delete_form=item_delete_form,
+        name_hookah=name_hookah
+    )
