@@ -92,16 +92,16 @@ class WorkerDay(db.Model):
             for i in range(start_h * 60, 24 * 60, period):
                 st_time_period = get_time_period(i)
                 end__time_period = get_time_period(i + period)
-                time_panel_list.append((st_time_period, end__time_period))
+                time_panel_list.append([st_time_period, end__time_period])
             for i in range(0, end_h * 60, period):
                 st_time_period = get_time_period(i)
                 end__time_period = get_time_period(i + period)
-                time_panel_list.append((st_time_period, end__time_period))
+                time_panel_list.append([st_time_period, end__time_period])
         else:
             for i in range(start_h * 60, end_h * 60, period):
                 st_time_period = get_time_period(i)
                 end__time_period = get_time_period(i + period)
-                time_panel_list.append((st_time_period, end__time_period))
+                time_panel_list.append([st_time_period, end__time_period])
         return time_panel_list
 
 

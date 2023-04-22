@@ -23,115 +23,91 @@
                 <div class="schedule-table">
                     <table class="table bg-white">
                         {# Колонка расписания #}
+                        <tr>
+                            <th>Time panel</th>
+                            {% for table in tables_list %}
+
+                                <td class="day">
+                                    {# Ссылка на все заказы стола в этот день #}
+                                    <a href="{{ url_for('tables.table_edit', table_id=table.id) }}">
+                                        Стол - {{ table.table_number }}
+                                    </a>
+                                </td>
+                            {% endfor %}
+                        </tr>
+
+                        {% for time_tuple in time_panel_list %}
                             <tr>
-                                <th>Time panel</th>
-                                {% for table_booked in tables_booked_list %}
-                                {% set table = table_booked[0] %}
-                                    <td class="day">
-                                        {# Ссылка на все заказы стола в этот день #}
-                                        <a href="{{ url_for('tables.table_edit', table_id=table.id) }}">
-                                            Стол - {{ table.table_number }}
-                                        </a>
-                                    </td>
-                                {% endfor %}
-                            </tr>
+                                <th>{{ time_tuple[0] }}</th>
+                                {% for item in time_tuple[2:] %}
 
-                            {% for time_for_dashboard in time_panel_list %}
-                            <tr>
+                                    {% if item[1] == None %}
+                                        <td class="active">
+                                            <form action="{{ url_for(
+                                                'dashboards.booking',
+                                                name_hookah=title,
+                                                table_id=item[0]
+                                                ) }}" method="post">
+                                                {{ booking_form.hidden_tag() }}
+                                                <p>
+                                                    Забронировать на имя:
+                                                </p>
 
-                                <th>{{ time_for_dashboard[0] }}</th>
-
-                                {% for table_booked in tables_booked_list %}
-                                {% set table = table_booked[0] %}
-                                    {% if table_booked[1] %}
-                                        {% for reservation in table_booked[1] %}
-                                            {% set start_booking_time =  reservation.start_date_time_brooke.time().strftime("%H:%M") %}
-                                            {% set end_booking_time =  reservation.finish_date_time_brooke.time().strftime("%H:%M") %}
-                                            {% if time_for_dashboard[0] == start_booking_time %}
-
-                                                    <td class="active">
-                                                        <h4>Забронировано на имя<br>{{ reservation.bookers_name }} </h4>
-                                                        <p>{{ start_booking_time }} - {{ end_booking_time }}</p>
-                                                        <a href="{{ url_for(
-                                                                    'dashboards.booking_delete',
-                                                                    name_hookah=title,
-                                                                    booking_id=reservation.id
-                                                                    ) }}" class="fs-5 link-secondary">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                                                            </svg>
-                                                        </a>
-                                                        <div class="hover">
-                                                            <h4>Заказ №...</h4>
-                                                            <p>Сумма: ...</p>
-                                                            <span>Не оплачено</span>
-                                                        </div>
-                                                    </td>
-
-                                            {% else %}
-
-                                                    <td>
+                                                <div class="hover">
                                                     {# Форма бронирования #}
-                                                    <form action="{{ url_for(
-                                                            'dashboards.booking',
-                                                            name_hookah=title,
-                                                            table_id=table.id
-                                                            ) }}" method="post">
-                                                    {{ booking_form.hidden_tag() }}
-                                                        <h4>{{ booking_form.bookers_name }}</h4>
-                                                        <p>
-                                                            Забронировать на время:
-                                                            {{ booking_form.start_date_time_brooke(value=time_for_dashboard[0]) }}
-                                                            -
-                                                            {{ booking_form.finish_date_time_brooke(value=time_for_dashboard[1]) }}
-                                                        </p>
-                                                        <button class="btn btn-link fs-5 link-secondary" type="submit"
-                                                                style=" --bs-btn-padding-y: .0rem; --bs-btn-padding-x: .0rem;">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-                                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                                            </svg>
-                                                        </button>
-                                                    </form>
-                                                    </td>
-
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-
-                                            <td>
-                                                {# Форма бронирования #}
-                                                <form action="{{ url_for(
-                                                        'dashboards.booking',
-                                                        name_hookah=title,
-                                                        table_id=table.id
-                                                        ) }}" method="post">
-                                                    {{ booking_form.hidden_tag() }}
                                                     <h4>{{ booking_form.bookers_name }}</h4>
-                                                    <p>
-                                                        Забронировать на время:
-                                                        {{ booking_form.start_date_time_brooke(value=time_for_dashboard[0]) }}
-                                                        -
-                                                        {{ booking_form.finish_date_time_brooke(value=time_for_dashboard[1]) }}
-                                                    </p>
-                                                    <button class="btn btn-link fs-5 link-secondary" type="submit"
+                                                    <button class="btn btn-link fs-5 link-secondary"
+                                                            type="submit"
                                                             style=" --bs-btn-padding-y: .0rem; --bs-btn-padding-x: .0rem;">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                             height="16"
+                                                             fill="currentColor" class="bi bi-plus-circle"
+                                                             viewBox="0 0 16 16">
                                                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                                                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                                                         </svg>
                                                     </button>
-                                                </form>
-                                            </td>
+                                                    <p>
+                                                        Время:
+                                                        {{ booking_form.start_date_time_brooke(value=time_tuple[0]) }}
+                                                        -
+                                                        {{ booking_form.finish_date_time_brooke(value=time_tuple[1]) }}
+                                                    </p>
+                                                </div>
+                                            </form>
+                                        </td>
+                                        {% else %}
+                                        <td class="active">
+                                            <h5>Забронировано на имя<br>{{ item.bookers_name }} </h5>
+                                            <p>{{ item.start_date_time_brooke.time().strftime("%H:%M") }} - {{ item.finish_date_time_brooke.time().strftime("%H:%M") }}</p>
+
+                                            <div class="hover">
+                                                <h4>Заказ №...</h4>
+                                                <p>Сумма: ...</p>
+                                                <span>Не оплачено</span><br>
+                                                <a href="{{ url_for(
+                                                            'dashboards.booking_delete',
+                                                            name_hookah=title,
+                                                            booking_id=item.table_id
+                                                            ) }}" class="fs-5 link-secondary" methods="delete">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                         height="16" fill="currentColor" class="bi bi-x-circle"
+                                                         viewBox="0 0 16 16">
+                                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
+
+
 
                                     {% endif %}
                                 {% endfor %}
 
+
                             </tr>
-                            {% endfor %}
-
-
+                        {% endfor %}
 
 
                     </table>

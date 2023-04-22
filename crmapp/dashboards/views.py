@@ -28,17 +28,27 @@ def bar_dashboard(name_hookah):
     month = calendar.month_name[today.month]
     weekday = get_day_week_today(today)
     working_day = bar.worker_days.filter_by(week_day=weekday).first()
-    time_panel_list = working_day.get_time_panel_list
+    time_panel_list: list[tuple[str, str]] = working_day.get_time_panel_list
     tables_list = bar.tables.all()
-    tables_booked_list = []
+
     booking_form = BookingForm()
+    new_time_panel_list = []
     for table in tables_list:
         table_booking = table.booked.filter(DateTimeBooked.start_date_time_brooke >= today.date()).all()
-        tables_booked_list.append((table, table_booking))
+
+        for time_period in time_panel_list:
+            l = len(time_period)
+            for booking_item in table_booking:
+                if time_period[0] == booking_item.start_date_time_brooke.time().strftime("%H:%M"):
+                    time_period.append(booking_item)
+                    break
+            if len(time_period) == l:
+                time_period.append((table.id, None))
+
     return render_template(
         "dashboards/bar_dashboard.html",
         title=title,
-        tables_booked_list=tables_booked_list,
+        tables_list=tables_list,
         time_panel_list=time_panel_list,
         today=today,
         month=month,
