@@ -40,10 +40,9 @@ class Item(db.Model):
     item_name = db.Column(db.String(50), nullable=False)
     item_description = db.Column(db.String(150), nullable=True)
     price = db.Column(db.Integer, index=True, nullable=False)
-    availability = db.Column(db.Integer, index=True, nullable=False)
+    availability = db.Column(db.Integer, index=True, nullable=True)
     is_archived = db.Column(db.Boolean, index=True, default=False, nullable=False)
     creation_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    archivation_date = db.Column(db.DateTime, nullable=False)
 
     category_id = db.Column(
         db.Integer,

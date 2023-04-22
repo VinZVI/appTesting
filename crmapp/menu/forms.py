@@ -47,7 +47,7 @@ class CategoryForm(FlaskForm):
 class CategoryDeleteForm(FlaskForm):
     category_name = StringField(
         'Название категории',
-        validators=[DataRequired(), Length(min=3, max=25)],
+        validators=[Length(min=3, max=25)],
         render_kw={
             "class": "form-control",
             "placeholder": "Название Категории"
@@ -63,11 +63,6 @@ class CategoryDeleteForm(FlaskForm):
         'DELETE',
         render_kw={"class": "btn btn-primary"}
     )
-
-    def validate_deletecategory(self, category_name: StringField) -> Exception:
-        category = Category.query.filter_by(category_name=category_name.data).first()
-        if category is None:
-            raise ValidationError('Такой категории не существует.')
 
 class ItemForm(FlaskForm):
     item_name = StringField(
@@ -99,7 +94,7 @@ class ItemForm(FlaskForm):
 
     availability = IntegerField(
         'Остаток',
-        validators=[DataRequired(), NumberRange(max=10000)],
+        validators=[NumberRange(max=10000)],
         render_kw={
             "class": "form-control",
             "placeholder": "Остаток"
@@ -134,7 +129,7 @@ class ItemForm(FlaskForm):
 class ItemDeleteForm(FlaskForm):
     item_name = StringField(
         'Название позиции',
-        validators=[DataRequired(), Length(max=50)],
+        validators=[Length(max=50)],
         render_kw={
             "class": "form-control",
             "placeholder": "Название позиции"
@@ -146,12 +141,12 @@ class ItemDeleteForm(FlaskForm):
         validators=[DataRequired()]
     )
 
+    hookah_id = HiddenField(
+        'ID кальянной',
+        validators=[DataRequired()]
+    )
+
     submit = SubmitField(
         'DELETE',
         render_kw={"class": "btn btn-primary"}
     )
-
-    def validate_deleteitem(self, item_name: StringField) -> Exception:
-        item = Item.query.filter_by(item_name=item_name.data).first()
-        if item is None:
-            raise ValidationError('Такой позиции не существует.')
