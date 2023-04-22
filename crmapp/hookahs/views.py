@@ -89,12 +89,12 @@ def bar_edit(name_hookah):
     )
 
 
-@blueprint.route('/bar_delete/<name_hookah>', methods=['GET', 'POST'])
+@blueprint.route('/bar_delete/<name_hookah>', methods=['GET', 'DELETE'])
 @manager_required
 def bar_delete(name_hookah):
     title = 'Delete hookah'
     form = HookahDeleteForm(request.form)
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'DELETE' and form.validate_on_submit():
         user = current_user._get_current_object()
         if form.name_hookah.data == name_hookah and user.check_password(form.login_password.data):
             bar = Hookah.query.filter_by(name_hookah=form.name_hookah.data).first()
@@ -136,7 +136,7 @@ def working_day_edit(name_hookah, working_day_id):
             print(e)
             db.session.rollback()
             raise DataBaseSaveError(e)
-        flash(f'Вы успешно внесли изменения в расписание рабочего дня {working_day.week_day.value}')
+        flash(f'Вы успешно внесли изменения в расписание рабочего дня {working_day.week_day.value[0]}')
         return redirect(url_for('hookahs.bar_edit', name_hookah=name_hookah))
 
     return render_template(

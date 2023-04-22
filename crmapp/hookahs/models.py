@@ -1,8 +1,9 @@
 from enum import Enum
-from datetime import timedelta, time
-from typing import List
+from datetime import datetime as DT, time, date, timedelta
+from itertools import product
 
 from crmapp.db import db
+from crmapp.time_fuctions import round_dt_to_delta, get_time_period
 from flask import current_app
 
 
@@ -32,7 +33,7 @@ class Hookah(db.Model):
     def __repr__(self) -> str:  # метод для отображения объекта
         return '<Hookah {}: user {}>'.format(self.name_hookah, self.user_id)
 
-    def set_worker_days(self) -> List[object]:
+    def set_worker_days(self) -> list[object]:
         working_day_list = []
         for weekdayEnum in WeekDayEnum:
             working_day = WorkerDay(
@@ -47,13 +48,13 @@ class Hookah(db.Model):
 
 
 class WeekDayEnum(Enum):
-    MONDAY = "mon"
-    TUESDAY = "tue"
-    WEDNESDAY = "wed"
-    THURSDAY = "thu"
-    FRIDAY = "fri"
-    SATURDAY = "sat"
-    SUNDAY = "sun"
+    MONDAY = ("Monday", "mon", 1)
+    TUESDAY = ("Tuesday", "tue", 2)
+    WEDNESDAY = ("Wednesday", "wed", 3)
+    THURSDAY = ("Thursday", "thu", 4)
+    FRIDAY = ("Friday", "fri", 5)
+    SATURDAY = ("Saturday", "sat", 6)
+    SUNDAY = ("Sunday", "sun", 7)
 
 
 class WorkerDay(db.Model):
@@ -76,5 +77,31 @@ class WorkerDay(db.Model):
 
     def __repr__(self):
         return f'<Day of week {self.day_of_week}>'
+
+    def get_time_is_rounded(self, time_count: time, period_time_panel: time) -> time:
+        period_time_panel = timedelta(minutes=period_time_panel)
+        return round_dt_to_delta(time_count, period_time_panel)
+
+    @property
+    def get_time_panel_list(self) -> list[time]:
+        period = self.period_time_panel.minute
+        start_h = self.startWD_time.hour
+        end_h = self.finishWD_time.hour
+        time_panel_list = []
+        if start_h > end_h:
+            for i in range(start_h * 60, 24 * 60, period):
+                st_time_period = get_time_period(i)
+                end__time_period = get_time_period(i + period)
+                time_panel_list.append([st_time_period, end__time_period])
+            for i in range(0, end_h * 60, period):
+                st_time_period = get_time_period(i)
+                end__time_period = get_time_period(i + period)
+                time_panel_list.append([st_time_period, end__time_period])
+        else:
+            for i in range(start_h * 60, end_h * 60, period):
+                st_time_period = get_time_period(i)
+                end__time_period = get_time_period(i + period)
+                time_panel_list.append([st_time_period, end__time_period])
+        return time_panel_list
 
 

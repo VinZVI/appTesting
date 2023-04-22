@@ -3,7 +3,7 @@ from enum import Enum
 
 from flask import current_app
 from crmapp.db import db
-
+from crmapp.time_fuctions import round_dt_to_delta
 
 
 class TableStateEnum(Enum):
@@ -42,21 +42,14 @@ class Table(db.Model):
         return '<Table {}: hookah {}>'.format(self.table_number, self.hookah_id)
 
 
-def round_dt_to_delta(dt: datetime = datetime.now(), delta: timedelta = timedelta(minutes=30)) -> timedelta:
-    """Округляет время до периода бронирования столов
-    :param dt: Timestamp to round (default: now)
-    :param delta: Lapse to round in minutes (default: minutes=30)
-    """
-    ref = datetime.min.replace(tzinfo=dt.tzinfo)
-    return ref + round((dt - ref) / delta) * delta
 
 
 class DateTimeBooked(db.Model):
     __tablename__: str = "dt_booked"
     id = db.Column(db.Integer, primary_key=True)
-
+    bookers_name = db.Column(db.String)
     start_date_time_brooke = db.Column(db.DateTime, nullable=False)
-    finish_date_time_brooke = db.Column(db.DateTime, nullable=False)
+    finish_date_time_brooke = db.Column(db.DateTime)
 
     table_id = db.Column(
         db.Integer,
@@ -64,13 +57,13 @@ class DateTimeBooked(db.Model):
         index=True
     )
 
-    def __init__(self, **kwargs):
-        super(DateTimeBooked, self).__init__(**kwargs)
-        if self.start_date_time_brooke is None:
-            self.start_date_time_brooke = round_dt_to_delta(
-                                                            datetime.utcnow,
-                                                            current_app.config['DELTA_TIME_ROUND']
-                                                            )
+    # def __init__(self, **kwargs):
+    #     super(DateTimeBooked, self).__init__(**kwargs)
+    #     if self.start_date_time_brooke is None:
+    #         self.start_date_time_brooke = round_dt_to_delta(
+    #                                                         datetime.utcnow,
+    #                                                         current_app.config['DELTA_TIME_ROUND']
+    #                                                         )
 
     def __repr__(self):
         return f'<Table {self.table_number_id}: start_dt_brooke {self.start_date_time_brooke}>'
