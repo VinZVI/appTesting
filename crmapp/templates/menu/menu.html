@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section id="section-jumbotron" class="jumbotron jumbotron-fluid d-flex justify-content-center align-items-center">
+        <div class="container text-center">
+            <h1>{{ title }}</h1>
+            <p class="lead d-none d-sm-block">Hookah Menu</p>
+
+            {% if not current_user.is_authenticated %}
+
+                <p class="lead">Sign up and get started</p>
+
+                <a href="{{ url_for('user.register') }}" class="btn btn-lg btn-warning">Sign Up</a>
+
+            {% else %}
+                <a href="{{ url_for('main.home') }}" class="btn btn-lg btn-secondary">Back to Dashboard</a>
+            {% endif %}
+        </div>
+    </section>
+        {% if hookah.categories %}
+            {% for category in categories_list %}
+            <div class="col-md-12">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            {{  category.category_name }}
+                            </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <p>{{ category.category_description }}</p>
+                                <table class="table table-striped"> 
+                                    <thead> 
+                                        <tr> 
+                                            <th>#</th> 
+                                            <th>Item Name</th> 
+                                            <th>Item Description</th> 
+                                            <th>Price</th> 
+                                            <th>Availability</th> 
+                                            <th>Creation Date</th>
+                                        </tr> 
+                                    </thead> 
+                                    {% for item in items_list %}
+                                    <tbody> 
+                                        <tr> 
+                                            <th scope="row">{{ loop.index }}</th> 
+                                            <td>{{ item.item_name }}</td> 
+                                            <td>{{ item.item_description }}</td> 
+                                            <td>{{ item.price }}</td> 
+                                            <td>{{ item.availability }}</td>
+                                            <td>{{ item.creation_date }}</td>
+                                        </tr> 
+                                    </tbody> 
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+            {% endfor %}        
+        {% endif %} 
+{% endblock %}

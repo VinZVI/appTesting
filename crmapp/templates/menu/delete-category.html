@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section id="section-jumbotron" class="jumbotron jumbotron-fluid d-flex justify-content-center align-items-center">
+        <div class="container text-center">
+            <h3>Вы уверены, что хотите удалить категорию: </h3>
+            <h2 class="text-danger">{{ category.category_name }}</h2>
+            <form action="{{
+                url_for(
+                    'menu.delete_category',
+                    name_hookah=name_hookah,
+                    category_id=category.id
+                )
+            }}" method="post">
+                    {{ category_delete_form.hidden_tag() }}
+                <div class="button" data-bs-theme="dark">
+                    {{ category_delete_form.submit(class_="btn btn-lg btn-warning") }}
+                    <a href="{{ url_for('menu.menu_edit', name_hookah=name_hookah) }}" class="btn btn-lg btn-secondary">Back to Hookah Menu</a>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
